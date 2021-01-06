@@ -1,0 +1,61 @@
+## for CentOS+X
+##to install all SNMP-updat
+
+yum install -y net-snmp net-snmp-libs net-snmp-utils
+
+##to change config
+#vi /etc/snmp/snmpd.conf
+----------------------------------------------------------------
+view    systemview    included   .1                          ###<---add new rule 
+view    systemview    included   .1.3.6.1.2.1.1
+view    systemview    included   .1.3.6.1.2.1.25.1.1
+----------------------------------------------------------------
+
+##startSNMP
+
+chkconfig snmpd on
+systemctl start snmpd.service
+systemctl enable snmpd.service
+
+##test SNMP can be work
+
+snmpwalk -v 2c -c public 127.0.0.1
+
+##to install snmpwalk from error
+
+yum install -y net-snmp-perl net-snmp-utils
+
+##error from firewall
+##need to add "udp port" whitelist
+
+firewall-cmd --permanent --add-port=161/udp
+firewall-cmd --reload
+
+
+
+### for Ubuntu
+
+---
+
+```
+##to install all SNMP-updat
+
+sudo apt-get install -y snmpd 
+sudo apt-get install -y snmp
+
+
+vi /etc/snmp/snmpd.conf
+----------------------------------------------------------------
+agentAddress  udp:161                                  ###<---add new rule
+
+view   systemonly  included   .1                       ###<---add new rule
+view   systemonly  included   .1.3.6.1.2.1.1
+view   systemonly  included   .1.3.6.1.2.1.25.1.1
+----------------------------------------------------------------
+
+重新啟動snmp服務
+#sudo /etc/init.d/snmpd restart
+
+測試SNMP是否有正常可執行
+#snmpwalk -v 2c -c public 127.0.0.1
+```
